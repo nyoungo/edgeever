@@ -663,6 +663,7 @@ type EditorPaneProps = {
   saveAndSyncToken: number;
   readingProtectionToggleToken: number;
   editorModeToggleToken: number;
+  outlineToggleToken: number;
   shortcutSettings: ShortcutSettings;
   onSyncRequested: () => Promise<void>;
   documentActionRequest?: MemoDocumentActionRequest | null;
@@ -736,6 +737,7 @@ const RichEditorPane = ({
   saveAndSyncToken,
   readingProtectionToggleToken,
   editorModeToggleToken,
+  outlineToggleToken,
   shortcutSettings,
   onSyncRequested,
   documentActionRequest,
@@ -834,6 +836,7 @@ const RichEditorPane = ({
   const handledSaveAndSyncTokenRef = useRef(saveAndSyncToken);
   const handledReadingProtectionToggleTokenRef = useRef(readingProtectionToggleToken);
   const handledEditorModeToggleTokenRef = useRef(editorModeToggleToken);
+  const handledOutlineToggleTokenRef = useRef(outlineToggleToken);
   const handledAiAssistantOpenTokenRef = useRef(aiAssistantOpenToken);
   const noteLinkModifier = useMemo(
     () => typeof navigator !== "undefined" && /mac|iphone|ipad|ipod/i.test(navigator.platform) ? "⌘" : "Ctrl",
@@ -1292,7 +1295,7 @@ const RichEditorPane = ({
     editable: Boolean(memo && !effectiveReadOnly && hydratedEditorMemoId === memo.id),
     editorProps: {
       attributes: {
-        class: "edgeever-note-rich-editor prose prose-slate max-w-none focus:outline-none min-h-[300px] px-4 py-3 sm:px-7",
+        class: "edgeever-note-rich-editor prose prose-slate max-w-none focus:outline-none min-h-[240px] px-4 py-3 sm:px-7 lg:min-h-[180px]",
       },
       handleKeyDown: (view, event) => {
         const { selection } = view.state;
@@ -3226,6 +3229,19 @@ const RichEditorPane = ({
   }, [editorModeToggleToken, editorShortcutBlocked, handleMarkdownModeChange, useMobilePlainTextEditor]);
 
   useEffect(() => {
+    if (handledOutlineToggleTokenRef.current === outlineToggleToken) {
+      return;
+    }
+
+    handledOutlineToggleTokenRef.current = outlineToggleToken;
+    if (editorShortcutBlocked || isMobileViewport || useMobilePlainTextEditor || useMarkdownSourceEditor) {
+      return;
+    }
+
+    setEditorOutlineCollapsed((current) => !current);
+  }, [editorShortcutBlocked, isMobileViewport, outlineToggleToken, useMarkdownSourceEditor, useMobilePlainTextEditor]);
+
+  useEffect(() => {
     if (handledSaveAndSyncTokenRef.current === saveAndSyncToken || saveMutationPending) {
       return;
     }
@@ -4377,7 +4393,7 @@ const RichEditorPane = ({
           </div>
         </div>
 
-        <div className="space-y-3 px-4 pb-4 pt-4 sm:px-7 lg:space-y-0 lg:pb-1 lg:pt-2">
+        <div className="space-y-3 px-4 pb-4 pt-4 sm:px-7 lg:space-y-0 lg:pb-0.5 lg:pt-1.5">
           <input
             value={title}
             readOnly={effectiveReadOnly}
@@ -4386,7 +4402,7 @@ const RichEditorPane = ({
               persistCurrentDraft(event.target.value, tagsText, getMobilePlainTextValue());
               markDirty();
             }}
-            className="block w-full rounded-md border-0 bg-transparent text-2xl font-bold leading-tight text-slate-950 outline-none transition placeholder:text-slate-300 focus-visible:bg-muted focus-visible:shadow-[inset_3px_0_0_var(--brand-green)] sm:text-3xl"
+            className="block w-full rounded-md border-0 bg-transparent text-2xl font-bold leading-tight text-slate-950 outline-none transition placeholder:text-slate-300 focus-visible:bg-muted focus-visible:shadow-[inset_3px_0_0_var(--brand-green)] sm:text-[26px]"
             placeholder={t("common.untitledMemo")}
           />
           <div className="flex flex-wrap items-center gap-2">
@@ -4599,7 +4615,8 @@ const RichEditorPane = ({
           editorTheme === "minimal-emerald" ||
           editorTheme === "outline-emerald" ||
           editorTheme === "wechat-green" ||
-          editorTheme === "modern-mint"
+          editorTheme === "modern-mint" ||
+          editorTheme === "marxico"
             ? editorTheme
             : "custom"
         }
@@ -4612,7 +4629,8 @@ const RichEditorPane = ({
           editorTheme !== "minimal-emerald" &&
           editorTheme !== "outline-emerald" &&
           editorTheme !== "wechat-green" &&
-          editorTheme !== "modern-mint"
+          editorTheme !== "modern-mint" &&
+          editorTheme !== "marxico"
             ? {
                 "--editor-theme-light-bg": customEditorTheme.light.background,
                 "--editor-theme-light-text": customEditorTheme.light.text,
@@ -4646,6 +4664,7 @@ const RichEditorPane = ({
           editorTheme !== "outline-emerald" &&
           editorTheme !== "wechat-green" &&
           editorTheme !== "modern-mint" &&
+          editorTheme !== "marxico" &&
           customEditorTheme.customCss && (
             <style
               data-theme-custom-css
@@ -4658,7 +4677,7 @@ const RichEditorPane = ({
             "flex gap-8 transition-all duration-200",
             useMarkdownSourceEditor
               ? "h-full min-h-0 flex-1 items-stretch px-0 py-0"
-              : "min-h-full items-start px-6 py-6 sm:px-10",
+              : "min-h-full items-start px-6 py-4 sm:px-10",
             desktopFocusMode
               ? "mx-auto w-full max-w-[1400px] justify-center"
               : editorContentAlignment === "center"
@@ -4793,6 +4812,7 @@ const RichEditorPane = ({
               editor={editor}
               scrollContainer={editorScrollContainer}
               collapsed={editorOutlineCollapsed}
+              shortcutLabel={formatShortcutBinding(shortcutSettings.toggleOutline)}
               onCollapsedChange={setEditorOutlineCollapsed}
             />
           )}

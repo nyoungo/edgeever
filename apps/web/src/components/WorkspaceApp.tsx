@@ -805,6 +805,7 @@ export const WorkspaceApp = ({
   const [noteSaveAndSyncToken, setNoteSaveAndSyncToken] = useState(0);
   const [noteReadingProtectionToggleToken, setNoteReadingProtectionToggleToken] = useState(0);
   const [noteEditorModeToggleToken, setNoteEditorModeToggleToken] = useState(0);
+  const [noteOutlineToggleToken, setNoteOutlineToggleToken] = useState(0);
   const [search, setSearch] = useState("");
   const [memoFilterMode, setMemoFilterMode] = useState<MemoFilterMode>("all");
   const [memoSortMode, setMemoSortMode] = useState<MemoSortMode>("updated-desc");
@@ -2605,6 +2606,7 @@ export const WorkspaceApp = ({
         || action === "saveAndSync"
         || action === "toggleReadingProtection"
         || action === "toggleEditorMode"
+        || action === "toggleOutline"
         || action === "openPreviousMemo"
         || action === "openNextMemo"
       ) {
@@ -2624,6 +2626,8 @@ export const WorkspaceApp = ({
           setNoteReadingProtectionToggleToken((value) => value + 1);
         } else if (action === "toggleEditorMode") {
           setNoteEditorModeToggleToken((value) => value + 1);
+        } else if (action === "toggleOutline") {
+          setNoteOutlineToggleToken((value) => value + 1);
         } else {
           const targetMemoId = action === "openPreviousMemo" ? previousMemoId : nextMemoId;
           if (targetMemoId) {
@@ -2811,7 +2815,7 @@ export const WorkspaceApp = ({
 
   return (
     <WorkspaceMotionProvider>
-      <div className="flex h-[100dvh] overflow-hidden bg-slate-50 text-slate-950">
+      <div className="edgeever-workspace-shell flex h-[100dvh] overflow-hidden text-slate-950">
       {pullToRefreshVisible && (
         <div
           className="pointer-events-none fixed inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-50 flex justify-center lg:hidden"
@@ -2838,7 +2842,7 @@ export const WorkspaceApp = ({
         >
           <aside
             className={cn(
-              "min-h-0 border-r border-slate-200 bg-white/75 backdrop-blur-lg",
+              "edgeever-workspace-sidebar min-h-0 border-r",
               desktopFocusModeActive
                 ? "hidden"
                 : visibleActivePane === "notebooks"
@@ -2908,11 +2912,11 @@ export const WorkspaceApp = ({
 
           <section
             className={cn(
-              "relative min-w-0 overflow-hidden border-r border-slate-200 bg-slate-50",
+              "edgeever-workspace-memo-list relative min-w-0 overflow-hidden border-r",
               desktopFocusModeActive
                 ? "hidden"
                 : rightView === "editor"
-                  ? (visibleActivePane === "memos" ? "block lg:block lg:bg-white/75 lg:backdrop-blur-lg" : "hidden lg:block lg:bg-white/75 lg:backdrop-blur-lg")
+                  ? (visibleActivePane === "memos" ? "block lg:block" : "hidden lg:block")
                   : (visibleActivePane === "memos" ? "block lg:hidden" : "hidden lg:hidden")
             )}
           >
@@ -3052,7 +3056,7 @@ export const WorkspaceApp = ({
             />
           </section>
 
-          <section className={cn("min-h-0 min-w-0 bg-white lg:block", visibleActivePane === "editor" ? "block" : "hidden")}>
+          <section className={cn("edgeever-workspace-editor min-h-0 min-w-0 lg:block", visibleActivePane === "editor" ? "block" : "hidden")}>
             {shouldRenderRightPane && (
               <Suspense fallback={<PaneLoadingFallback label={rightPaneLoadingLabel} />}>
                 <m.div key={rightView} className="h-full min-h-0 min-w-0" {...paneEnterMotion}>
@@ -3127,6 +3131,7 @@ export const WorkspaceApp = ({
                     saveAndSyncToken={noteSaveAndSyncToken}
                     readingProtectionToggleToken={noteReadingProtectionToggleToken}
                     editorModeToggleToken={noteEditorModeToggleToken}
+                    outlineToggleToken={noteOutlineToggleToken}
                     shortcutSettings={shortcutSettings}
                     onSyncRequested={syncMemosManually}
                     documentActionRequest={memoDocumentActionRequest}

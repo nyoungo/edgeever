@@ -203,7 +203,7 @@ export const enUS = {
     syncIntervalDescription: "Sync edits to the server automatically while keeping local drafts available immediately.",
     syncIntervals: { "30s": "Every 30 seconds", "5m": "Every 5 minutes", "15m": "Every 15 minutes", "30m": "Every 30 minutes", "1h": "Every hour", "2h": "Every 2 hours" },
     mermaidThemeTitle: "Diagram theme",
-    mermaidThemeDescription: "Choose the visual theme for diagrams in notes.",
+    mermaidThemeDescription: "Follow the app appearance or choose a fixed visual theme for diagrams.",
     editorThemeTitle: "Editor theme",
     editorThemeDescription: "Choose a writing style for the note editor. Saved in this browser.",
     editorContentAlignmentTitle: "Note content layout",
@@ -218,6 +218,7 @@ export const enUS = {
       "outline-emerald": "Outline Emerald",
       "wechat-green": "WeChat Classic Green",
       "modern-mint": "Modern Mint",
+      marxico: "Classic Blue & White",
       custom: "Custom",
     },
     customEditorTheme: {
@@ -240,6 +241,7 @@ export const enUS = {
       contrastWarning: "Body, muted, heading, or accent colors need more contrast before saving.",
     },
     mermaidThemes: {
+      auto: "Follow app appearance",
       "zinc-light": "Zinc Light",
       "zinc-dark": "Zinc Dark",
       "tokyo-night": "Tokyo Night",
@@ -742,6 +744,10 @@ export const enUS = {
         label: "Switch editor mode",
         description: "Switch between Markdown source and rich text editing.",
       },
+      toggleOutline: {
+        label: "Show/hide document outline",
+        description: "Show or hide the current note's document outline on desktop.",
+      },
     },
   },
   quickSwitcher: {
@@ -1170,6 +1176,8 @@ export const enUS = {
     outline: "Outline",
     showOutline: "Show outline",
     hideOutline: "Hide outline",
+    collapseOutlineHeading: "Collapse {{name}}",
+    expandOutlineHeading: "Expand {{name}}",
   },
   sharing: {
     action: "Share note",
